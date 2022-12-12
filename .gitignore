@@ -16,6 +16,3 @@ yarn-error.log
 /.fleet
 /.idea
 /.vscode
-/database/migrations
-/app/Http/Controllers/AuthController.php
-/app/Http/Models
