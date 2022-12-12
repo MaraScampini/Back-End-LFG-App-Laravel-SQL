@@ -25,8 +25,11 @@ Route::post('/login', [AuthController::class, 'login']);
 // AUTH
 
 Route::group([
-    'middleware' => 'jwt.auth'
+    'middleware' => ['jwt.auth', 'isAdmin']
 ], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
     Route::get('/me', [AuthController::class, 'me']);
 });
+
+// GAMES
+
