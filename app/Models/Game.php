@@ -13,6 +13,5 @@ class Game extends Model
         'name',
         'genre',
         'FTP',
-        'format'
     ];
 }

@@ -1,6 +1,7 @@
 <?php
 
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GamesController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 
@@ -32,4 +33,4 @@ Route::group([
 });
 
 // GAMES
-
+Route::post('/game', [GamesController::class, 'addGame'])->middleware('isAdmin');
