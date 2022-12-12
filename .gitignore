@@ -17,5 +17,5 @@ yarn-error.log
 /.idea
 /.vscode
 /database/migrations
-/Http/Controllers/AuthController.php
-/Http/Models
+/app/Http/Controllers/AuthController.php
+/app/Http/Models
