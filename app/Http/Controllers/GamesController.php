@@ -24,14 +24,15 @@ class GamesController extends Controller
 
             return response()->json([
                 'success' => true,
-                'message' => 'Game created' . $game
+                'message' => 'Game created',
+                'data' => $game
             ]);
         } catch (\Throwable $th) {
-            Log::error("Error adding super admin role: " . $th->getMessage());
+            Log::error("Error creating game: " . $th->getMessage());
 
             return response()->json([
                 'success' => true,
-                'message' => 'SuperAdmin could not be added to user'
+                'message' => 'Game could not be created'
             ], 500);        }
         
     }
