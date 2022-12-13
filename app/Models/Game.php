@@ -13,6 +13,7 @@ class Game extends Model
         'name',
         'genre',
         'FTP',
+        'user_id'
     ];
 
     public function user()
