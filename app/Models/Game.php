@@ -14,4 +14,9 @@ class Game extends Model
         'genre',
         'FTP',
     ];
+
+    public function user()
+    {
+        return $this->belongsTo(User::class);
+    }
 }
