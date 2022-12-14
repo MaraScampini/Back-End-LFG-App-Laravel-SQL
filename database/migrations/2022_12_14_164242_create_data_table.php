@@ -15,10 +15,10 @@ return new class extends Migration
     {
         Schema::create('data', function (Blueprint $table) {
             $table->id();
-            $table->string('surname', 50);
-            $table->string('address', 100);
-            $table->integer('age');
-            $table->string('steam_username');
+            $table->string('surname', 50)->nullable();
+            $table->string('address', 100)->nullable();
+            $table->integer('age')->nullable();
+            $table->string('steam_username')->nullable();
             $table->unsignedBigInteger('user_id');
 
             $table->foreign('user_id')->references('id')->on('users')->onDelete('cascade');
