@@ -38,6 +38,8 @@ Route::group([
 ], function() {
     Route::get('/profile', [UserController::class, 'profile']);
 });
+Route::get('/profile/{id}', [UserController::class, 'getUserById']);
+
 
 // GAMES
 Route::post('/game', [GamesController::class, 'addGame'])->middleware('isAdmin');
