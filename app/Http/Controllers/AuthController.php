@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Data;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -31,6 +32,9 @@ class AuthController extends Controller
                 'email' => $request->get('email'),
                 'password' => bcrypt($request->password),
                 'role_id' => 2
+            ]);
+            $data = Data::create([
+                'user_id' => $user->id
             ]);
             $token = JWTAuth::fromUser($user);
             return response()->json(compact('user', 'token'), 201);
