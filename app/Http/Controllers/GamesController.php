@@ -54,5 +54,42 @@ class GamesController extends Controller
             ], 500);
         }
     }
+    public function getGameById($id)
+    {
+        try {
+            $game = Game::where('id', $id)->get();
+            return response()->json([
+                'success' => true,
+                'message' => 'Games retrieved',
+                'data' => $game
+            ]);
+        } catch (\Throwable $th) {
+            Log::error("Error retrieving games: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Could not retrieve games'
+            ], 500);
+        }
+    }
+
+    public function getGameByName($name)
+    {
+        try {
+            $game = Game::where('name', 'like', '%'.$name.'%')->get();
+            return response()->json([
+                'success' => true,
+                'message' => 'Games retrieved',
+                'data' => $game
+            ]);
+        } catch (\Throwable $th) {
+            Log::error("Error retrieving games: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Could not retrieve games'
+            ], 500);
+        }
+    }
 
 }
