@@ -37,4 +37,22 @@ class GamesController extends Controller
         
     }
 
+    public function getAllGames() {
+        try {
+            $games = Game::query()->get();
+            return response()->json([
+                'success' => true,
+                'message' => 'Games retrieved',
+                'data' => $games
+            ]);
+        } catch (\Throwable $th) {
+            Log::error("Error retrieving games: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Could not retrieve games'
+            ], 500);
+        }
+    }
+
 }

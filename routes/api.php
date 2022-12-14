@@ -34,3 +34,4 @@ Route::group([
 
 // GAMES
 Route::post('/game', [GamesController::class, 'addGame'])->middleware('isAdmin');
+Route::get('/games',[GamesController::class, 'getAllGames']);
