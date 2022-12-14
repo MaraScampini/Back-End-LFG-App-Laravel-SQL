@@ -60,15 +60,15 @@ class GamesController extends Controller
             $game = Game::where('id', $id)->get();
             return response()->json([
                 'success' => true,
-                'message' => 'Games retrieved',
+                'message' => 'Game retrieved',
                 'data' => $game
             ]);
         } catch (\Throwable $th) {
-            Log::error("Error retrieving games: " . $th->getMessage());
+            Log::error("Error retrieving game: " . $th->getMessage());
 
             return response()->json([
                 'success' => true,
-                'message' => 'Could not retrieve games'
+                'message' => 'Could not retrieve game'
             ], 500);
         }
     }
@@ -79,15 +79,33 @@ class GamesController extends Controller
             $game = Game::where('name', 'like', '%'.$name.'%')->get();
             return response()->json([
                 'success' => true,
-                'message' => 'Games retrieved',
+                'message' => 'Game retrieved',
                 'data' => $game
             ]);
         } catch (\Throwable $th) {
-            Log::error("Error retrieving games: " . $th->getMessage());
+            Log::error("Error retrieving game: " . $th->getMessage());
 
             return response()->json([
                 'success' => true,
-                'message' => 'Could not retrieve games'
+                'message' => 'Could not retrieve game'
+            ], 500);
+        }
+    }
+
+    public function deleteGameById($id){
+        try {
+            $game = Game::where('id', $id)->delete();
+            return response()->json([
+                'success' => true,
+                'message' => 'Game deleted',
+                'data' => $game
+            ]);
+        } catch (\Throwable $th) {
+            Log::error("Error retrieving game: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Could not retrieve game'
             ], 500);
         }
     }
