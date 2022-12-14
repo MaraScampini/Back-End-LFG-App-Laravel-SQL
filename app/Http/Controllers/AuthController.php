@@ -38,10 +38,9 @@ class AuthController extends Controller
             ]);
             $token = JWTAuth::fromUser($user);
             return response()->json(compact('user', 'token'), 201);
-                } catch (\Throwable $th) {
+        } catch (\Throwable $th) {
             Log::error("Error in register: " . $th->getMessage());
-                }
-        
+        }
     }
 
     public function login(Request $request)
@@ -66,29 +65,34 @@ class AuthController extends Controller
 
     public function logout()
     {
-
         auth()->logout();
         return response()->json(['message' => 'Successfully logged out']);
-
-
-        // $this->validate($request, [
-        //     'token' => 'required'
-        // ]);
-        // try {
-        //     JWTAuth::invalidate($request->token);
-        //     return response()->json([
-        //         'success' => true,
-        //         'message' => 'User logged out successfully'
-        //     ]);
-        // } catch (\Exception $exception) {
-        //     return response()->json([
-        //         'success' => false,
-        //         'message' => 'Sorry, the user cannot be logged out'
-        //     ],
-        //         Response::HTTP_INTERNAL_SERVER_ERROR
-        //     );
-        // }
     }
 
-    
+    public function changePassword(Request $request)
+    {
+        try {
+            $userId = auth()->user()->id;
+
+            $updatedPassword = bcrypt($request->password);
+            $user = [
+                'email'=>auth()->user()->email,
+                'password'=>$updatedPassword
+            ];
+
+            User::where('id', $userId)->update($user);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password updated'
+            ]);
+        } catch (\Throwable $th) {
+            Log::error("Error updating password: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Password not be updated'
+            ], 500);
+        }
+    }
 }

@@ -30,6 +30,7 @@ Route::group([
     'middleware' => 'jwt.auth'
 ], function () {
     Route::post('/logout', [AuthController::class, 'logout']);
+    Route::put('/changepassword', [AuthController::class, 'changePassword']);
 });
 
 // PROFILE
