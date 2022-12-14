@@ -37,13 +37,18 @@ Route::group([
     'middleware' => 'jwt.auth'
 ], function() {
     Route::get('/profile', [UserController::class, 'profile']);
+    Route::get('/profiles', [UserController::class, 'getAllUsers'])->middleware('isAdmin');
+
 });
 Route::get('/profile/{id}', [UserController::class, 'getUserById']);
 
 
 // GAMES
-Route::post('/game', [GamesController::class, 'addGame'])->middleware('isAdmin');
+Route::group(['middleware' => ['jwt.auth', 'isAdmin']
+], function() {
+    Route::post('/game', [GamesController::class, 'addGame']);
+    Route::delete('/game/{id}', [GamesController::class, 'deleteGameById']);
+});
 Route::get('/games',[GamesController::class, 'getAllGames']);
 Route::get('/game/{id}', [GamesController::class, 'getGameById']);
 Route::get('/game/name/{name}', [GamesController::class, 'getGameByName']);
-Route::delete('/game/{id}', [GamesController::class, 'deleteGameById'])->middleware('isAdmin');
