@@ -6,6 +6,7 @@ use App\Models\Data;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class UserController extends Controller
 {
@@ -69,8 +70,29 @@ class UserController extends Controller
                 'message' => 'Users could not be retrieved'
             ], 500);
         }
+    }
 
+    public function updateProfile(Request $req) {
 
+        try {
+            $userId = auth()->user()->id;
+            $input = array_filter($req->all());
+            $fullUser = Data::where('user_id', $userId)->update($input);
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Users successfully retrieved',
+                'data' => $fullUser
+            ]);
+
+        } catch (\Throwable $th) {
+            Log::error("Error updating user: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User data could not be updated'
+            ], 500);        }
+        
     }
 
 }

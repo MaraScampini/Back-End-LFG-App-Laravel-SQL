@@ -38,7 +38,7 @@ Route::group([
 ], function() {
     Route::get('/profile', [UserController::class, 'profile']);
     Route::get('/profiles', [UserController::class, 'getAllUsers'])->middleware('isAdmin');
-
+    Route::put('/profile', [UserController::class, 'updateProfile']);
 });
 Route::get('/profile/{id}', [UserController::class, 'getUserById']);
 
