@@ -16,7 +16,7 @@ class UserController extends Controller
             $userId = auth()->user()->id;
 
             $fullUser = Data::select('data.*')->with('user:id,email')->find($userId);
-            
+
             return response()->json([
                 'success' => true,
                 'message' => 'Profile successfully retrieved',
@@ -53,7 +53,8 @@ class UserController extends Controller
         }
     }
 
-    public function getAllUsers() {
+    public function getAllUsers()
+    {
         try {
             $users = User::get();
 
@@ -72,7 +73,8 @@ class UserController extends Controller
         }
     }
 
-    public function updateProfile(Request $req) {
+    public function updateProfile(Request $req)
+    {
 
         try {
             $userId = auth()->user()->id;
@@ -84,7 +86,6 @@ class UserController extends Controller
                 'message' => 'Users successfully retrieved',
                 'data' => $fullUser
             ]);
-
         } catch (\Throwable $th) {
             Log::error("Error updating user: " . $th->getMessage());
 
@@ -93,19 +94,25 @@ class UserController extends Controller
                 'message' => 'User data could not be updated'
             ], 500);
         }
-        
     }
 
-    public function deleteMyProfile(){
+    public function deleteMyProfile()
+    {
         try {
             $userId = auth()->user()->id;
-            User::where('id', $userId)->delete();
+            if (auth()->user()->role_id != 1) {
+                User::where('id', $userId)->delete();
 
-            return response()->json([
-                'success' => true,
-                'message' => 'User successfully deleted',
-            ]);
-            
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User successfully deleted',
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Admin profiles cannot be deleted'
+                ], 400);
+            }
         } catch (\Throwable $th) {
             Log::error("Error deleting user: " . $th->getMessage());
 
@@ -114,9 +121,34 @@ class UserController extends Controller
                 'message' => 'User could not be deleted'
             ], 500);
         }
-       
-
-
     }
 
+    public function deleteProfile($id)
+    {
+        try {
+            $user = User::where('id', $id)->first();
+
+            if ($user->role_id != 1) {
+
+                User::where('id', $id)->delete();
+
+                return response()->json([
+                    'success' => true,
+                    'message' => 'User successfully deleted',
+                ], 200);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Admin profiles cannot be deleted'
+                ], 400);
+            }
+        } catch (\Throwable $th) {
+            Log::error("Error deleting user: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User could not be deleted'
+            ], 500);
+        }
+    }
 }

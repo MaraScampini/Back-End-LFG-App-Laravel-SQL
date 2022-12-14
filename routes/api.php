@@ -40,7 +40,9 @@ Route::group([
     Route::get('/profile', [UserController::class, 'profile']);
     Route::get('/profiles', [UserController::class, 'getAllUsers'])->middleware('isAdmin');
     Route::put('/profile', [UserController::class, 'updateProfile']);
-    Route::delete('/profile', [UserController::class, 'deleteMyProfile']);
+    Route::delete(
+    '/profile', [UserController::class, 'deleteMyProfile']);
+    Route::delete('/profile/{id}', [UserController::class, 'deleteProfile'])->middleware('isAdmin');
 });
 Route::get('/profile/{id}', [UserController::class, 'getUserById']);
 
