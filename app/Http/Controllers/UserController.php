@@ -91,8 +91,32 @@ class UserController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'User data could not be updated'
-            ], 500);        }
+            ], 500);
+        }
         
+    }
+
+    public function deleteMyProfile(){
+        try {
+            $userId = auth()->user()->id;
+            User::where('id', $userId)->delete();
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User successfully deleted',
+            ]);
+            
+        } catch (\Throwable $th) {
+            Log::error("Error deleting user: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'User could not be deleted'
+            ], 500);
+        }
+       
+
+
     }
 
 }
