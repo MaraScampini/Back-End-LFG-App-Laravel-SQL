@@ -34,12 +34,13 @@ class UserController extends Controller
     public function getUserById($id)
     {
         try {
-            $user = User::where('id', $id)->get();
+
+            $fullUser = Data::select('data.*')->with('user:id,email')->find($id);
 
             return response()->json([
                 'success' => true,
                 'message' => 'Profile successfully retrieved',
-                'data' => $user
+                'data' => $fullUser
             ]);
         } catch (\Throwable $th) {
             Log::error("Error retrieving user: " . $th->getMessage());
