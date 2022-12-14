@@ -2,6 +2,7 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Data;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
@@ -11,12 +12,14 @@ class UserController extends Controller
     public function profile()
     {
         try {
-            $user = auth()->user();
+            $userId = auth()->user()->id;
 
+            $fullUser = Data::select('data.*')->with('user:id,email')->find($userId);
+            
             return response()->json([
                 'success' => true,
                 'message' => 'Profile successfully retrieved',
-                'data' => $user
+                'data' => $fullUser
             ]);
         } catch (\Throwable $th) {
             Log::error("Error retrieving user: " . $th->getMessage());
