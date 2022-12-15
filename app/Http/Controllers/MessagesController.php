@@ -109,7 +109,7 @@ class MessagesController extends Controller
             $user = User::find($userId);
             $userParty = $user->party()->wherePivot('user_id', $userId)->find($party);
             if($userParty){
-                $messages = Message::where('party_id', $id)->orderBy('id', 'DESC')->get();
+                $messages = Message::where('party_id', $id)->orderBy('id', 'DESC')->select('messages.content', 'messages.user_id', 'messages.created_at')->with('user:id,name')->get();
                 return response()->json([
                     'success' => true,
                     'data' => $messages
