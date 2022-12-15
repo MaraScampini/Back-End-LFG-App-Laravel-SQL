@@ -87,5 +87,7 @@ Route::group([
     'sendMessage']);
     Route::put('/message', [
     MessagesController::class, 'editMessage']);
-    Route::delete('/message/{id}', [MessagesController::class, 'deleteMessage']);
+    Route::delete(
+    '/message/{id}', [MessagesController::class, 'deleteMessage']);
+    Route::get('/message/{id}', [MessagesController::class, 'getAllMessages']);
 });

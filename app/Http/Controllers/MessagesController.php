@@ -101,4 +101,32 @@ class MessagesController extends Controller
             ], 500);
         }
     }
+
+    public function getAllMessages($id){
+        try {
+            $userId = auth()->user()->id;
+            $party = $id;
+            $user = User::find($userId);
+            $userParty = $user->party()->wherePivot('user_id', $userId)->find($party);
+            if($userParty){
+                $messages = Message::where('party_id', $id)->orderBy('id', 'DESC')->get();
+                return response()->json([
+                    'success' => true,
+                    'data' => $messages
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not in that party'
+                ], 500);
+            }
+        } catch (\Throwable $th) {
+            Log::error("Error getting messages: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Could not get messages'
+            ], 500);
+        }
+    }
 }
