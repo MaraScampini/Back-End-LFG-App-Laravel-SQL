@@ -53,4 +53,9 @@ class User extends Authenticatable implements JWTSubject
     public function data() {
         return $this->hasOne(Data::class);
     }
+
+    public function party()
+    {
+        return $this->belongsToMany(Party::class);
+    }
 }
