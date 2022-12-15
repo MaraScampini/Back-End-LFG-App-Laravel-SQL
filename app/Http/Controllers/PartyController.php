@@ -123,4 +123,22 @@ class PartyController extends Controller
             ], 500);
         }
     }
+
+    public function getPartyByGame($id){
+        try {
+            $parties = Party::where('game_id', $id)->get();
+            return response()->json([
+                'success' => true,
+                'message' => 'Parties found',
+                'data' => $parties
+            ]);
+        } catch (\Throwable $th) {
+            Log::error("Error getting parties: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Could not get parties'
+            ], 500);
+        }
+    }
 }

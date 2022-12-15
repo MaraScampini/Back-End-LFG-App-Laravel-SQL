@@ -37,34 +37,40 @@ Route::group([
 // PROFILE
 Route::group([
     'middleware' => 'jwt.auth'
-], function() {
+], function () {
     Route::get('/profile', [UserController::class, 'profile']);
     Route::get('/profiles', [UserController::class, 'getAllUsers'])->middleware('isAdmin');
     Route::put('/profile', [UserController::class, 'updateProfile']);
     Route::delete(
-    '/profile', [UserController::class, 'deleteMyProfile']);
+        '/profile',
+        [UserController::class, 'deleteMyProfile']
+    );
     Route::delete('/profile/{id}', [UserController::class, 'deleteProfile'])->middleware('isAdmin');
 });
 Route::get('/profile/{id}', [UserController::class, 'getUserById']);
 
 
 // GAMES
-Route::group(['middleware' => ['jwt.auth', 'isAdmin']
-], function() {
+Route::group([
+    'middleware' => ['jwt.auth', 'isAdmin']
+], function () {
     Route::post('/game', [GamesController::class, 'addGame']);
     Route::delete('/game/{id}', [GamesController::class, 'deleteGameById']);
 });
-Route::get('/games',[GamesController::class, 'getAllGames']);
+Route::get('/games', [GamesController::class, 'getAllGames']);
 Route::get('/game/{id}', [GamesController::class, 'getGameById']);
 Route::get('/game/name/{name}', [GamesController::class, 'getGameByName']);
 
 // PARTIES
 Route::group([
     'middleware' => 'jwt.auth'
-], function(){
+], function () {
     Route::post('/party', [PartyController::class, 'createParty']);
     Route::post(
-    '/join/{id}', [PartyController::class, 'joinPartyById']);
+        '/join/{id}',
+        [PartyController::class, 'joinPartyById']
+    );
     Route::post('/leave/{id}', [PartyController::class, 'leaveParty']);
     Route::delete('/party/{id}', [PartyController::class, 'deleteParty']);
 });
+Route::get('/party/{id}', [PartyController::class, 'getPartyByGame']);
