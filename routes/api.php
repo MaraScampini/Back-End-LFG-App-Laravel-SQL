@@ -63,5 +63,7 @@ Route::group([
     'middleware' => 'jwt.auth'
 ], function(){
     Route::post('/party', [PartyController::class, 'createParty']);
-    Route::post('/join/{id}', [PartyController::class, 'joinPartyById']);
+    Route::post(
+    '/join/{id}', [PartyController::class, 'joinPartyById']);
+    Route::post('/leave/{id}', [PartyController::class, 'leaveParty']);
 });

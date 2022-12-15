@@ -34,21 +34,65 @@ class PartyController extends Controller
         }
     }
 
-    public function joinPartyById($id){
+    public function joinPartyById($id)
+    {
         try {
             $userId = auth()->user()->id;
             $party = Party::find($id);
-            $party->user()->attach($userId, ['owner' => false, 'active' => true]);
-            return response()->json([
-                'success' => true,
-                'message' => 'Party joined',
-            ]);
+            $active = $party->user()->wherePivot('active', true)->find($userId);
+            $existing = $party->user()->find($userId);
+            if ($active) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You already are in that party',
+                ]);
+            } else if ($existing) {
+                $party->user()->updateExistingPivot($userId, ['owner' => false, 'active' => true]);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Party re-joined',
+                ]);
+            } else {
+                $party->user()->attach($userId, ['owner' => false, 'active' => true]);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Party joined',
+                ]);
+            }
         } catch (\Throwable $th) {
             Log::error("Error joining party: " . $th->getMessage());
 
             return response()->json([
                 'success' => true,
                 'message' => 'Could not join party'
+            ], 500);
+        }
+    }
+
+    public function leaveParty($id)
+    {
+        try {
+            $userId = auth()->user()->id;
+            $party = Party::find($id);
+            $owner = $party->user()->wherePivot('owner', true)->first();
+            if ($owner->id == $userId) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The owner cannot leave the party, delete it instead'
+                ]);
+            } else {
+                $party->user()->updateExistingPivot($userId, ['owner' => false, 'active' => false]);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'You have left the party',
+                ]);
+            }
+        } catch (\Throwable $th) {
+            Log::error("Error joining party: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Could not leave party'
             ], 500);
         }
     }
