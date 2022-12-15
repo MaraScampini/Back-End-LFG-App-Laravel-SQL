@@ -3,6 +3,7 @@
 namespace App\Http\Controllers;
 
 use App\Models\Party;
+use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
 
@@ -131,6 +132,26 @@ class PartyController extends Controller
                 'success' => true,
                 'message' => 'Parties found',
                 'data' => $parties
+            ]);
+        } catch (\Throwable $th) {
+            Log::error("Error getting parties: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Could not get parties'
+            ], 500);
+        }
+    }
+
+    public function getMyParties(){
+        try {
+            $userId = auth()->user()->id;
+            $user = User::find($userId);
+            $myParties = $user->party()->wherePivot('user_id', $userId)->get();
+            return response()->json([
+                'success' => true,
+                'message' => 'Parties found',
+                'data' => $myParties
             ]);
         } catch (\Throwable $th) {
             Log::error("Error getting parties: " . $th->getMessage());

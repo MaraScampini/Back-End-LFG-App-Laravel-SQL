@@ -72,5 +72,7 @@ Route::group([
     );
     Route::post('/leave/{id}', [PartyController::class, 'leaveParty']);
     Route::delete('/party/{id}', [PartyController::class, 'deleteParty']);
+    Route::get('/party', [PartyController::class, 'getMyParties']);
+
 });
 Route::get('/party/{id}', [PartyController::class, 'getPartyByGame']);
