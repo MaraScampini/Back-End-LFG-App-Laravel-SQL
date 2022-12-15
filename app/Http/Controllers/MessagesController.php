@@ -66,11 +66,38 @@ class MessagesController extends Controller
                 ], 500);
             }
         } catch (\Throwable $th) {
-            Log::error("Error sending message: " . $th->getMessage());
+            Log::error("Error editing message: " . $th->getMessage());
 
             return response()->json([
                 'success' => true,
                 'message' => 'Could not edit message'
+            ], 500);
+        }
+    }
+
+    public function deleteMessage($id)
+    {
+        try {
+            $userId = auth()->user()->id;
+            $isMine = Message::where('user_id', $userId)->find($id);
+            if ($isMine) {
+                Message::where('id', $id)->delete();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Message deleted'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You cannot delete messages from other users'
+                ], 500);
+            }
+        } catch (\Throwable $th) {
+            Log::error("Error deleting message: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Could not delete message'
             ], 500);
         }
     }

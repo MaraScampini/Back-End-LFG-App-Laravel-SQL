@@ -85,5 +85,7 @@ Route::group([
 ], function () {
     Route::post('/message', [MessagesController::class,
     'sendMessage']);
-    Route::put('/message', [MessagesController::class, 'editMessage']);
+    Route::put('/message', [
+    MessagesController::class, 'editMessage']);
+    Route::delete('/message/{id}', [MessagesController::class, 'deleteMessage']);
 });
