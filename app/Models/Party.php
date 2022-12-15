@@ -9,6 +9,11 @@ class Party extends Model
 {
     use HasFactory;
 
+    protected $fillable = [
+        'name',
+        'game_id'
+    ];
+
     public function user() {
         return $this->belongsToMany(User::class);
     }
