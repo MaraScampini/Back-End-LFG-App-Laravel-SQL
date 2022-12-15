@@ -2,10 +2,12 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GamesController;
+use App\Http\Controllers\MessagesController;
 use App\Http\Controllers\PartyController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
+use Symfony\Component\Mime\MessageConverter;
 
 /*
 |--------------------------------------------------------------------------
@@ -76,3 +78,10 @@ Route::group([
 
 });
 Route::get('/party/{id}', [PartyController::class, 'getPartyByGame']);
+
+// MESSAGES
+Route::group([
+    'middleware' => 'jwt.auth'
+], function () {
+    Route::post('/message', [MessagesController::class, 'sendMessage']);
+});
