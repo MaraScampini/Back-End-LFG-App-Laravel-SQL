@@ -33,4 +33,23 @@ class PartyController extends Controller
             ], 500);
         }
     }
+
+    public function joinPartyById($id){
+        try {
+            $userId = auth()->user()->id;
+            $party = Party::find($id);
+            $party->user()->attach($userId, ['owner' => false, 'active' => true]);
+            return response()->json([
+                'success' => true,
+                'message' => 'Party joined',
+            ]);
+        } catch (\Throwable $th) {
+            Log::error("Error joining party: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Could not join party'
+            ], 500);
+        }
+    }
 }
