@@ -2,6 +2,7 @@
 
 use App\Http\Controllers\AuthController;
 use App\Http\Controllers\GamesController;
+use App\Http\Controllers\PartyController;
 use App\Http\Controllers\UserController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
@@ -56,3 +57,10 @@ Route::group(['middleware' => ['jwt.auth', 'isAdmin']
 Route::get('/games',[GamesController::class, 'getAllGames']);
 Route::get('/game/{id}', [GamesController::class, 'getGameById']);
 Route::get('/game/name/{name}', [GamesController::class, 'getGameByName']);
+
+// PARTIES
+Route::group([
+    'middleware' => 'jwt.auth'
+], function(){
+    Route::post('/party', [PartyController::class, 'createParty']);
+});
