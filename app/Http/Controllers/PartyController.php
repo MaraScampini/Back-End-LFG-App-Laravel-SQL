@@ -74,8 +74,8 @@ class PartyController extends Controller
         try {
             $userId = auth()->user()->id;
             $party = Party::find($id);
-            $owner = $party->user()->wherePivot('owner', true)->first();
-            if ($owner->id == $userId) {
+            $owner = $party->user()->wherePivot('owner', true)->find($userId);
+            if ($owner) {
                 return response()->json([
                     'success' => false,
                     'message' => 'The owner cannot leave the party, delete it instead'
@@ -93,6 +93,33 @@ class PartyController extends Controller
             return response()->json([
                 'success' => true,
                 'message' => 'Could not leave party'
+            ], 500);
+        }
+    }
+
+    public function deleteParty($id) {
+        try{
+        $userId = auth()->user()->id;
+            $party = Party::find($id);
+            $owner = $party->user()->wherePivot('owner', true)->find($userId);
+            if ($owner) {
+                $party->delete();
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Party deleted'
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Only the owner can delete the party',
+                ]);
+            }
+        } catch (\Throwable $th) {
+            Log::error("Error deleting party: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Could not delete party'
             ], 500);
         }
     }

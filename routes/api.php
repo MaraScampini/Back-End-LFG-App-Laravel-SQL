@@ -66,4 +66,5 @@ Route::group([
     Route::post(
     '/join/{id}', [PartyController::class, 'joinPartyById']);
     Route::post('/leave/{id}', [PartyController::class, 'leaveParty']);
+    Route::delete('/party/{id}', [PartyController::class, 'deleteParty']);
 });
