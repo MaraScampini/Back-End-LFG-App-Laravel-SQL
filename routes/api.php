@@ -83,5 +83,7 @@ Route::get('/party/{id}', [PartyController::class, 'getPartyByGame']);
 Route::group([
     'middleware' => 'jwt.auth'
 ], function () {
-    Route::post('/message', [MessagesController::class, 'sendMessage']);
+    Route::post('/message', [MessagesController::class,
+    'sendMessage']);
+    Route::put('/message', [MessagesController::class, 'editMessage']);
 });

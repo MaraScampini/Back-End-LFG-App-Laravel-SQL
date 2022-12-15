@@ -44,5 +44,34 @@ class MessagesController extends Controller
         }
     }
 
-    
+    public function editMessage(Request $req)
+    {
+        try {
+            $userId = auth()->user()->id;
+            $messageId = $req->get('id');
+            $isMine = Message::where('user_id', $userId)->find($messageId);
+            if ($isMine) {
+                $updatedMessage = Message::where('id', $messageId)->update([
+                    'content' => $req->get('content')
+                ]);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Message edited',
+                    'data' => $updatedMessage
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You cannot edit messages from other users'
+                ], 500);
+            }
+        } catch (\Throwable $th) {
+            Log::error("Error sending message: " . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Could not edit message'
+            ], 500);
+        }
+    }
 }
