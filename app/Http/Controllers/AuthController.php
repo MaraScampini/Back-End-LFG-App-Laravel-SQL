@@ -97,6 +97,7 @@ class AuthController extends Controller
             ];
 
             User::where('id', $userId)->update($user);
+            auth()->logout();
 
             return response()->json([
                 'success' => true,
