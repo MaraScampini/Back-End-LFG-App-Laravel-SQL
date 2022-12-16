@@ -5,6 +5,7 @@ namespace App\Http\Controllers;
 use App\Models\Game;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class GamesController extends Controller
 {
@@ -13,6 +14,15 @@ class GamesController extends Controller
         try {
 
             $userId = auth()->user()->id;
+
+            $validator = Validator::make($request->all(), [
+                'name' => 'required|string|max:255',
+                'genre' => 'required|string|max:50',
+                'FTP' => 'required|boolean',
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->messages(), 400);
+            }
 
             $game = Game::create([
                 'name' => $request->get('name'),
