@@ -13,13 +13,13 @@ class MessagesController extends Controller
     public function sendMessage(Request $req)
     {
         try {
+            // TODO comprobar que el user está activo
             $userId = auth()->user()->id;
             $party = $req->get('party_id');
             $user = User::find($userId);
-            $userParty = $user->party()->wherePivot('user_id', $userId)->find($party);
+            $userParty = $user->party()->wherePivot('user_id', $userId)->wherePivot('active', true)->find($party);
             $validator = Validator::make($req->all(), [
-                'content' => 'required|text',
-                'user_id' => 'required',
+                'content' => 'required',
                 'party_id' => 'required',
             ]);
             if ($validator->fails()) {
@@ -57,15 +57,19 @@ class MessagesController extends Controller
     {
         try {
             $userId = auth()->user()->id;
+            $user = User::find($userId);
+            $party = $req->get('party_id');
             $messageId = $req->get('id');
             $isMine = Message::where('user_id', $userId)->find($messageId);
+            $userParty = $user->party()->wherePivot('user_id', $userId)->wherePivot('active', true)->find($party);
+            dd($userParty);
             $validator = Validator::make($req->all(), [
-                'content' => 'required|text'
+                'content' => 'required'
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->messages(), 400);
             }
-            if ($isMine) {
+            if ($isMine && $userParty) {
                 $updatedMessage = Message::where('id', $messageId)->update([
                     'content' => $req->get('content')
                 ]);
@@ -77,7 +81,7 @@ class MessagesController extends Controller
             } else {
                 return response()->json([
                     'success' => false,
-                    'message' => 'You cannot edit messages from other users'
+                    'message' => 'You cannot edit that message'
                 ], 500);
             }
         } catch (\Throwable $th) {
@@ -94,8 +98,12 @@ class MessagesController extends Controller
     {
         try {
             $userId = auth()->user()->id;
+            $user = User::find($userId);
+            $party = Message::where('user_id', $userId)->select('party_id')->first();
+            $userParty = $user->party()->wherePivot('user_id', $userId)->wherePivot('active', true)->wherePivot('party_id', $party->party_id)->first();
+
             $isMine = Message::where('user_id', $userId)->find($id);
-            if ($isMine) {
+            if ($isMine && $userParty) {
                 Message::where('id', $id)->delete();
                 return response()->json([
                     'success' => true,
@@ -104,7 +112,7 @@ class MessagesController extends Controller
             } else {
                 return response()->json([
                     'success' => false,
-                    'message' => 'You cannot delete messages from other users'
+                    'message' => 'You cannot delete that message'
                 ], 500);
             }
         } catch (\Throwable $th) {
