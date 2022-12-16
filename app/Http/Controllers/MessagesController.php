@@ -6,6 +6,7 @@ use App\Models\Message;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class MessagesController extends Controller
 {
@@ -16,6 +17,14 @@ class MessagesController extends Controller
             $party = $req->get('party_id');
             $user = User::find($userId);
             $userParty = $user->party()->wherePivot('user_id', $userId)->find($party);
+            $validator = Validator::make($req->all(), [
+                'content' => 'required|text',
+                'user_id' => 'required',
+                'party_id' => 'required',
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->messages(), 400);
+            }
             if ($userParty) {
 
                 $message = Message::create([
@@ -50,6 +59,12 @@ class MessagesController extends Controller
             $userId = auth()->user()->id;
             $messageId = $req->get('id');
             $isMine = Message::where('user_id', $userId)->find($messageId);
+            $validator = Validator::make($req->all(), [
+                'content' => 'required|text'
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->messages(), 400);
+            }
             if ($isMine) {
                 $updatedMessage = Message::where('id', $messageId)->update([
                     'content' => $req->get('content')
