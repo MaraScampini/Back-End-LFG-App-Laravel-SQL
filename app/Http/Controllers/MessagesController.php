@@ -13,7 +13,6 @@ class MessagesController extends Controller
     public function sendMessage(Request $req)
     {
         try {
-            // TODO comprobar que el user está activo
             $userId = auth()->user()->id;
             $party = $req->get('party_id');
             $user = User::find($userId);
