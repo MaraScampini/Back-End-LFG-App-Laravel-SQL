@@ -66,8 +66,17 @@ class AuthController extends Controller
 
     public function logout()
     {
-        auth()->logout();
-        return response()->json(['message' => 'Successfully logged out']);
+        try {
+            auth()->logout();
+            return response()->json(['message' => 'Successfully logged out']);
+        } catch (\Throwable $th) {
+            Log::error("Error logging out" . $th->getMessage());
+
+            return response()->json([
+                'success' => true,
+                'message' => 'Could not log out'
+            ], 500);
+        }
     }
 
     public function changePassword(Request $request)
@@ -83,8 +92,8 @@ class AuthController extends Controller
 
             $updatedPassword = bcrypt($request->password);
             $user = [
-                'email'=>auth()->user()->email,
-                'password'=>$updatedPassword
+                'email' => auth()->user()->email,
+                'password' => $updatedPassword
             ];
 
             User::where('id', $userId)->update($user);
