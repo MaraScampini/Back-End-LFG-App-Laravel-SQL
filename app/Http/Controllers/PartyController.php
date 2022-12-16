@@ -15,8 +15,8 @@ class PartyController extends Controller
         try {
             $userId = auth()->user()->id;
             $validator = Validator::make($req->all(), [
-                'content' => 'required|string|max:100',
-                'game_id' => 'required'
+                'name' => 'required|string|max:100',
+                'game_id' => 'required|integer'
             ]);
             if ($validator->fails()) {
                 return response()->json($validator->messages(), 400);
@@ -48,14 +48,20 @@ class PartyController extends Controller
         try {
             $userId = auth()->user()->id;
             $party = Party::find($id);
+            if (!$party) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Party does not exist in database'
+                ], 500);
+            }
             $active = $party->user()->wherePivot('active', true)->find($userId);
             $existing = $party->user()->find($userId);
-            if ($active) {
+             if ($active && $party) {
                 return response()->json([
                     'success' => false,
                     'message' => 'You already are in that party',
                 ]);
-            } else if ($existing) {
+            } else if ($existing && $party) {
                 $party->user()->updateExistingPivot($userId, ['owner' => false, 'active' => true]);
                 return response()->json([
                     'success' => true,
@@ -84,7 +90,13 @@ class PartyController extends Controller
             $userId = auth()->user()->id;
             $party = Party::find($id);
             $owner = $party->user()->wherePivot('owner', true)->find($userId);
-            if ($owner) {
+            $active = $party->user()->wherePivot('active', true)->find($userId);
+            if(!$active) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'You are not in that party',
+                ]);
+            } else if ($owner) {
                 return response()->json([
                     'success' => false,
                     'message' => 'The owner cannot leave the party, delete it instead'
@@ -111,6 +123,12 @@ class PartyController extends Controller
         try {
             $userId = auth()->user()->id;
             $party = Party::find($id);
+            if(!$party) {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'The party does not exist',
+                ]);
+            }
             $owner = $party->user()->wherePivot('owner', true)->find($userId);
             if ($owner) {
                 $party->delete();
