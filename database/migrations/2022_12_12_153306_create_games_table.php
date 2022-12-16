@@ -17,7 +17,6 @@ return new class extends Migration
             $table->id();
             $table->string('name');
             $table->string('genre');
-            $table->string('format');
             $table->boolean('FTP');
             $table->timestamps();
         });
