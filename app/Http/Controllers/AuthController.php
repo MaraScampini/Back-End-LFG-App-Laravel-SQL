@@ -73,6 +73,12 @@ class AuthController extends Controller
     {
         try {
             $userId = auth()->user()->id;
+            $validator = Validator::make($request->all(), [
+                'password' => 'required|string|min:6',
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->messages(), 400);
+            }
 
             $updatedPassword = bcrypt($request->password);
             $user = [
