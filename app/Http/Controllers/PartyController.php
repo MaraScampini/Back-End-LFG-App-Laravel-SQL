@@ -6,6 +6,7 @@ use App\Models\Party;
 use App\Models\User;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Log;
+use Illuminate\Support\Facades\Validator;
 
 class PartyController extends Controller
 {
@@ -13,6 +14,13 @@ class PartyController extends Controller
     {
         try {
             $userId = auth()->user()->id;
+            $validator = Validator::make($req->all(), [
+                'content' => 'required|string|max:100',
+                'game_id' => 'required'
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->messages(), 400);
+            }
 
             $party = Party::create([
                 'name' => $req->get('name'),
@@ -98,9 +106,10 @@ class PartyController extends Controller
         }
     }
 
-    public function deleteParty($id) {
-        try{
-        $userId = auth()->user()->id;
+    public function deleteParty($id)
+    {
+        try {
+            $userId = auth()->user()->id;
             $party = Party::find($id);
             $owner = $party->user()->wherePivot('owner', true)->find($userId);
             if ($owner) {
@@ -125,7 +134,8 @@ class PartyController extends Controller
         }
     }
 
-    public function getPartyByGame($id){
+    public function getPartyByGame($id)
+    {
         try {
             $parties = Party::where('game_id', $id)->get();
             return response()->json([
@@ -143,7 +153,8 @@ class PartyController extends Controller
         }
     }
 
-    public function getMyParties(){
+    public function getMyParties()
+    {
         try {
             $userId = auth()->user()->id;
             $user = User::find($userId);
