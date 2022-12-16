@@ -78,6 +78,16 @@ class UserController extends Controller
 
         try {
             $userId = auth()->user()->id;
+            $validator = Validator::make($req->all(), [
+                'surname' => 'string|max:100',
+                'address' => 'string',
+                'age' => 'integer',
+                'steam_username' => 'string',
+                'user_id' => 'required'
+            ]);
+            if ($validator->fails()) {
+                return response()->json($validator->messages(), 400);
+            }
             $input = array_filter($req->all());
             $fullUser = Data::where('user_id', $userId)->update($input);
 
