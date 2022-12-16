@@ -24,30 +24,39 @@ class GamesController extends Controller
                 return response()->json($validator->messages(), 400);
             }
 
+            $existing = Game::where('name', $request->get('name'))->first();
+            if(!$existing){
             $game = Game::create([
                 'name' => $request->get('name'),
                 'genre' => $request->get('genre'),
                 'FTP' => $request->get('FTP'),
                 'user_id' => $userId
             ]);
+                return response()->json([
+                    'success' => true,
+                    'message' => 'Game created',
+                    'data' => $game
+                ]);
+            } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Game already exists in database'
+                ], 500);
+            }
 
-
-            return response()->json([
-                'success' => true,
-                'message' => 'Game created',
-                'data' => $game
-            ]);
+            
         } catch (\Throwable $th) {
             Log::error("Error creating game: " . $th->getMessage());
 
             return response()->json([
                 'success' => true,
                 'message' => 'Game could not be created'
-            ], 500);        }
-        
+            ], 500);
+        }
     }
 
-    public function getAllGames() {
+    public function getAllGames()
+    {
         try {
             $games = Game::query()->get();
             return response()->json([
@@ -86,7 +95,7 @@ class GamesController extends Controller
     public function getGameByName($name)
     {
         try {
-            $game = Game::where('name', 'like', '%'.$name.'%')->get();
+            $game = Game::where('name', 'like', '%' . $name . '%')->get();
             return response()->json([
                 'success' => true,
                 'message' => 'Game retrieved',
@@ -102,14 +111,23 @@ class GamesController extends Controller
         }
     }
 
-    public function deleteGameById($id){
+    public function deleteGameById($id)
+    {
         try {
-            $game = Game::where('id', $id)->delete();
+            $game = Game::where('id', $id)->first();
+            if ($game) {
+                $game->delete();
             return response()->json([
                 'success' => true,
                 'message' => 'Game deleted',
                 'data' => $game
             ]);
+        } else {
+                return response()->json([
+                    'success' => false,
+                    'message' => 'Game does not exist in database'
+                ], 500);
+        }
         } catch (\Throwable $th) {
             Log::error("Error retrieving game: " . $th->getMessage());
 
@@ -119,5 +137,4 @@ class GamesController extends Controller
             ], 500);
         }
     }
-
 }
